@@ -1,39 +1,35 @@
-const asc = (str) => {
-  return str.charCodeAt(0)
-}
+const { codes, reverseCodes } = require('./data')
 
 const criptoRule = (strCripto, cypher = true) => {
   let valorFinal = ''
-
-  let Valor
 
   const aChaves = [77, 84, 79, 65, 73, 78, 67, 70, 82]
 
   const arrayCaracteres = strCripto.split('')
 
   arrayCaracteres.forEach((el, i) => {
-    let numeroCalculo = asc(el)
+    let n = reverseCodes[el]
 
-    if (numeroCalculo > 31) {
-      numeroCalculo = numeroCalculo - 32
-      if (cypher) {
-        Valor = 1
-      } else {
-        Valor = -1
-      }
-      numeroCalculo = numeroCalculo + aChaves[i % 9] * Valor
+    if (n > 31) {
+      n = n - 32
 
-      numeroCalculo = numeroCalculo % 224
+      const valor = cypher ? 1 : -1
 
-      if (numeroCalculo < 0) {
-        numeroCalculo = 224 + numeroCalculo
+      n = n + aChaves[i % 9] * valor
+
+      n = n % 224
+
+      if (n < 0) {
+        n = 224 + n
       }
 
-      numeroCalculo = numeroCalculo + 32
+      n = n + 32
     }
 
-    valorFinal = valorFinal + String.fromCharCode(numeroCalculo)
+    valorFinal = valorFinal + codes[n]
   })
+
+  console.log(valorFinal)
 
   return valorFinal
 }
