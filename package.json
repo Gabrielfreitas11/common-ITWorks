@@ -20,9 +20,5 @@
     "@rocketseat/eslint-config": "^1.2.0",
     "eslint": "^8.39.0"
   },
-  "dependencies": {
-    "edge-js": "^19.3.0",
-    "iconv": "^3.0.1",
-    "iconv-lite": "^0.6.3"
-  }
+  "dependencies": {}
 }
