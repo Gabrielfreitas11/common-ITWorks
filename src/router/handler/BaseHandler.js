@@ -1,4 +1,9 @@
-class BaseHandler {
+const allowedOrigins = [
+  "http://localhost:4200",
+  "https://app.impostograma.com.br",
+];
+
+module.exports = class BaseHandler {
   event = null;
 
   context = null;
@@ -8,6 +13,8 @@ class BaseHandler {
   async handle(event, context, method, ignoreBaseHandler) {
     this.setFunctionContext(event, context);
 
+    const origin = event.headers?.origin || event.headers?.Origin;
+
     if (ignoreBaseHandler) return this[method](event, context);
 
     if (!(await this.isAuthorized())) {
@@ -16,11 +23,19 @@ class BaseHandler {
         JSON.stringify({
           statusCode: 401,
           message: "Unauthorized!",
-        })
+        }),
+        null,
+        origin
       );
     }
 
     try {
+      if (JSON.stringify(event?.headers).includes("form-data")) {
+        event.body = JSON.stringify({
+          formData: event.body,
+        });
+      }
+
       this.generateLog({
         payload: {
           body:
@@ -38,7 +53,8 @@ class BaseHandler {
       const returnFunction = BaseHandler.httpResponse(
         response.statusCode,
         typeof response === "string" ? response : JSON.stringify(response),
-        response.headers
+        response.headers,
+        origin
       );
 
       if (response.statusCode !== 200) {
@@ -52,7 +68,12 @@ class BaseHandler {
           ? err.response.data
           : err.message || err;
 
-      const returnFunction = BaseHandler.httpResponse(500, message);
+      const returnFunction = BaseHandler.httpResponse(
+        500,
+        message,
+        null,
+        origin
+      );
 
       this.generateLog(returnFunction);
 
@@ -71,17 +92,19 @@ class BaseHandler {
         : null;
   }
 
-  static httpResponse(statusCode, body, headers = {}) {
+  static httpResponse(statusCode, body, headers = {}, origin) {
+    const allowOriginIndex = allowedOrigins.findIndex((el) => el == origin);
+
     return {
       statusCode,
       body,
       headers: {
         "Access-Control-Allow-Origin":
-          process.env.stage == "prod"
-            ? "https://app.impostograma.com.br"
-            : "http://localhost:4200",
+          origin == null
+            ? "*"
+            : allowedOrigins[allowOriginIndex == -1 ? 0 : allowOriginIndex],
         "Access-Control-Allow-Headers":
-          "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token, cnpj, type",
+          "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token, cnpj, type, cnpj_gestor",
         ...headers,
       },
     };
@@ -114,6 +137,4 @@ class BaseHandler {
       this.event.headers.authorization === this.env.authToken
     );
   }
-}
-
-module.exports = BaseHandler;
+};

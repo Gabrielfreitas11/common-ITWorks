@@ -1,6 +1,6 @@
 {
   "name": "@impostograma/common",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "main": "index.js",
   "engines": {
     "node": ">=14"
@@ -8,6 +8,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Gabrielfreitas11/common-ITWorks.git"

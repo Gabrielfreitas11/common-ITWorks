@@ -1,7 +1,9 @@
-const cryptography = require('./src/cryptography')
-const router = require('./src/router')
+const Cryptography = require('./src/cryptography')
+const Router = require('./src/router')
+const HttpResponse = require('./src/httpResponse')
 
 module.exports = {
-  cryptography,
-  router,
+  Cryptography,
+  Router,
+  HttpResponse
 }
