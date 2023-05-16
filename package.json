@@ -1,7 +1,6 @@
 {
-  "name": "common-itworks",
+  "name": "@impostograma/common",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "engines": {
     "node": ">=14"
@@ -13,15 +12,12 @@
     "type": "git",
     "url": "git+https://github.com/Gabrielfreitas11/common-ITWorks.git"
   },
-  "author": "",
+  "author": "Gabriel Freitas",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Gabrielfreitas11/common-ITWorks/issues"
   },
   "homepage": "https://github.com/Gabrielfreitas11/common-ITWorks#readme",
-  "devDependencies": {
-    "@rocketseat/eslint-config": "^1.2.0",
-    "eslint": "^8.39.0"
-  },
-  "dependencies": {}
+  "devDependencies": {},
+  "description": "Common para os projetos da itwotks"
 }
