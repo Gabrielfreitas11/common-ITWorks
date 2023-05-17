@@ -1,6 +1,6 @@
 {
   "name": "@impostograma/common",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "main": "index.js",
   "engines": {
     "node": ">=14"
@@ -12,7 +12,7 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  },  
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Gabrielfreitas11/common-ITWorks.git"
@@ -23,6 +23,10 @@
     "url": "https://github.com/Gabrielfreitas11/common-ITWorks/issues"
   },
   "homepage": "https://github.com/Gabrielfreitas11/common-ITWorks#readme",
-  "devDependencies": {},
-  "description": "Common para os projetos da itwotks"
+  "description": "Common para os projetos da itwotks",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "winston": "^3.8.2",
+    "winston-loki": "^6.0.6"
+  }
 }

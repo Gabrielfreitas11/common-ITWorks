@@ -2,6 +2,7 @@ const allowedOrigins = [
   "http://localhost:4200",
   "https://app.impostograma.com.br",
 ];
+const logger = require("../../logger");
 
 module.exports = class BaseHandler {
   event = null;
@@ -11,6 +12,8 @@ module.exports = class BaseHandler {
   env = process.env;
 
   async handle(event, context, method, ignoreBaseHandler) {
+    let log;
+
     this.setFunctionContext(event, context);
 
     const origin = event.headers?.origin || event.headers?.Origin;
@@ -18,12 +21,17 @@ module.exports = class BaseHandler {
     if (ignoreBaseHandler) return this[method](event, context);
 
     if (!(await this.isAuthorized())) {
-      return BaseHandler.httpResponse(
+      const logPayload = log();
+      logPayload.response = {
+        statusCode: 401,
+        message: "Unauthorized!",
+      };
+
+      logger.initLog(logPayload, "warn");
+
+      return BaseController.httpResponse(
         401,
-        JSON.stringify({
-          statusCode: 401,
-          message: "Unauthorized!",
-        }),
+        JSON.stringify(logPayload.response),
         null,
         origin
       );
@@ -34,21 +42,31 @@ module.exports = class BaseHandler {
         event.body = JSON.stringify({
           formData: event.body,
         });
-      }
 
-      this.generateLog({
-        payload: {
-          body:
-            typeof event.body === "string"
-              ? JSON.parse(event.body)
-              : event.body,
-          queryStringParameters: event.queryStringParameters,
-        },
-      });
+        const newEvent = { ...event };
+
+        newEvent.body = JSON.stringify({
+          formData: "***FORMDATA***",
+        });
+
+        log = logger.initLog({ event: newEvent, context }, "pending");
+      } else {
+        log = logger.initLog({ event, context }, "pending");
+      }
 
       context.callbackWaitsForEmptyEventLoop = false;
 
       const response = await this[method](event, context);
+
+      const logPayload = log();
+
+      logPayload.response = response;
+
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        logger.initLog(logPayload, "info");
+      } else {
+        logger.initLog(logPayload, "error");
+      }
 
       const returnFunction = BaseHandler.httpResponse(
         response.statusCode,
@@ -57,27 +75,18 @@ module.exports = class BaseHandler {
         origin
       );
 
-      if (response.statusCode !== 200) {
-        this.generateLog(returnFunction);
-      }
-
       return returnFunction;
     } catch (err) {
+      const logPayload = log();
+
       const message =
-        err.response && err.response.data
+        err?.response && err?.response?.data
           ? err.response.data
-          : err.message || err;
+          : err?.message || err;
 
-      const returnFunction = BaseHandler.httpResponse(
-        500,
-        message,
-        null,
-        origin
-      );
+      logger.initLog(logPayload, "error");
 
-      this.generateLog(returnFunction);
-
-      return returnFunction;
+      return BaseHandler.httpResponse(500, message, null, origin);
     }
   }
 
@@ -119,12 +128,6 @@ module.exports = class BaseHandler {
       return true;
     }
     return checkByAuthMethod;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-
-  generateLog(response) {
-    console.log(response);
   }
 
   authHeaderIsTheSameInTheEnvironment() {
