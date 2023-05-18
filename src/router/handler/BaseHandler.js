@@ -20,23 +20,6 @@ module.exports = class BaseHandler {
 
     if (ignoreBaseHandler) return this[method](event, context);
 
-    if (!(await this.isAuthorized())) {
-      const logPayload = log();
-      logPayload.response = {
-        statusCode: 401,
-        message: "Unauthorized!",
-      };
-
-      logger.initLog(logPayload, "warn");
-
-      return BaseController.httpResponse(
-        401,
-        JSON.stringify(logPayload.response),
-        null,
-        origin
-      );
-    }
-
     try {
       if (JSON.stringify(event?.headers).includes("form-data")) {
         event.body = JSON.stringify({
@@ -52,6 +35,23 @@ module.exports = class BaseHandler {
         log = logger.initLog({ event: newEvent, context }, "pending");
       } else {
         log = logger.initLog({ event, context }, "pending");
+      }
+
+      if (!(await this.isAuthorized())) {
+        const logPayload = log();
+        logPayload.response = {
+          statusCode: 401,
+          message: "Unauthorized!",
+        };
+
+        logger.initLog(logPayload, "warn");
+
+        return BaseHandler.httpResponse(
+          401,
+          JSON.stringify(logPayload.response),
+          null,
+          origin
+        );
       }
 
       context.callbackWaitsForEmptyEventLoop = false;

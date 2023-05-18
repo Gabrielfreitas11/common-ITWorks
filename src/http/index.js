@@ -32,8 +32,11 @@ const logAdapter = async ({
             ? "**STREAM**"
             : response.data instanceof Buffer
             ? { type: "Buffer", data: "**ARRAYBUFFER**" }
-            : JSON.stringify(response.data).length > 10.0
-            ? { type: "Provavelmente Base64", data: "**Retorno muito grande**" }
+            : JSON.stringify(response.data).length > 10000
+            ? {
+                type: "Base64 ou JSON muito grande",
+                data: "**Retorno muito grande**",
+              }
             : response.data, // eslint-disable-line
       },
     },
@@ -41,10 +44,7 @@ const logAdapter = async ({
   );
 };
 
-module.exports.request = async function request(
-  options,
-  optionsHttpsAgent = null
-) {
+module.exports = async (options, optionsHttpsAgent = null) => {
   const log = logger.initLog({ request: options }, "pending");
 
   const optionsAxios =
