@@ -27,7 +27,10 @@ const initializeLogger = () => {
     transports: [
       new LokiTransport({
         host: process.env.GRAFANA_HOST,
-        labels: { app: `${process.env.client}-serverless` },
+        labels: {
+          app: `${process.env.client}-serverless`,
+          function: `${process.env.client}-${process.env.service}`,
+        },
         json: true,
         format: format.json(),
         basicAuth: `${process.env.GRAFANA_USER}:${process.env.GRAFANA_AUTH}`,

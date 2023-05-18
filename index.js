@@ -4,6 +4,7 @@ const HttpResponse = require("./src/httpResponse");
 const Http = require("./src/http");
 const Logger = require("./src/logger");
 const Validator = require("./src/validator");
+const Formatter = require("./src/formatter");
 
 module.exports = {
   Cryptography,
@@ -11,5 +12,6 @@ module.exports = {
   HttpResponse,
   Http,
   Logger,
-  Validator
+  Validator,
+  Formatter
 };
