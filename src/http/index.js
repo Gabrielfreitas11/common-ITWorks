@@ -2,7 +2,7 @@ const axios = require("axios");
 
 const logger = require("../logger");
 
-const logAdapter = async ({
+const logAdapter = ({
   statusCode = null,
   response = { data: "" },
   options,
@@ -10,7 +10,7 @@ const logAdapter = async ({
   error = null,
 }) => {
   if (error) {
-    await logger.fail(
+    logger.fail(
       {
         request: options,
         response: error?.response
@@ -22,7 +22,7 @@ const logAdapter = async ({
     return;
   }
   const logType = statusCode < 200 || statusCode > 299 ? "fail" : "info";
-  await logger[logType](
+  logger[logType](
     {
       request: options,
       response: {
@@ -56,7 +56,7 @@ module.exports = async (options, optionsHttpsAgent = null) => {
     async (response) => {
       const logPayload = log();
 
-      await logAdapter({
+      logAdapter({
         statusCode: response.status,
         response,
         options,
@@ -67,7 +67,7 @@ module.exports = async (options, optionsHttpsAgent = null) => {
     async (error) => {
       const logPayload = log();
 
-      await logAdapter({ error, options, log: logPayload });
+      logAdapter({ error, options, log: logPayload });
       throw error;
     }
   );

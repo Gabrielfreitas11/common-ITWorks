@@ -9,16 +9,18 @@ module.exports = class BaseHandler {
 
   context = null;
 
+  method = null;
+
+  allowMethodsDiableCors = [];
+
   env = process.env;
 
-  async handle(event, context, method, ignoreBaseHandler) {
+  async handle(event, context, method, allowMethodsDiableCors = []) {
     let log;
 
-    this.setFunctionContext(event, context);
+    this.setFunctionContext(event, context, allowMethodsDiableCors, method);
 
     const origin = event.headers?.origin || event.headers?.Origin;
-
-    if (ignoreBaseHandler) return this[method](event, context);
 
     try {
       if (JSON.stringify(event?.headers).includes("form-data")) {
@@ -90,9 +92,11 @@ module.exports = class BaseHandler {
     }
   }
 
-  setFunctionContext(event, context) {
+  setFunctionContext(event, context, allowMethodsDiableCors, method) {
     this.event = event;
     this.context = context;
+    this.allowMethodsDiableCors = allowMethodsDiableCors;
+    this.method = method;
     process.env.sourceIpAddress =
       event.requestContext &&
       event.requestContext.identity &&
@@ -109,7 +113,7 @@ module.exports = class BaseHandler {
       body,
       headers: {
         "Access-Control-Allow-Origin":
-          origin == null
+          origin == null || this.allowMethodsDiableCors.includes(this.method)
             ? "*"
             : allowedOrigins[allowOriginIndex == -1 ? 0 : allowOriginIndex],
         "Access-Control-Allow-Headers":
@@ -131,7 +135,7 @@ module.exports = class BaseHandler {
   }
 
   authHeaderIsTheSameInTheEnvironment() {
-    if (this.event.headers === undefined) {
+    if (this.event.headers === undefined || this.env.noAuth) {
       return true;
     }
 

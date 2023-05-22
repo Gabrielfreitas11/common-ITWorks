@@ -1,8 +1,6 @@
-const { createLogger, transports, format } = require("winston");
+const lambda = require("../aws/lambda");
 
-const LokiTransport = require("winston-loki");
-
-let logger;
+const lambdaAccess = lambda();
 
 const { client, service, hideSensitiveProperies, sourceIpAddress } =
   process.env;
@@ -17,32 +15,6 @@ const {
   LEVEL_PENDING,
   LEVEL_WARN,
 } = require("./constants");
-
-const initializeLogger = () => {
-  if (logger) {
-    return;
-  }
-
-  logger = createLogger({
-    transports: [
-      new LokiTransport({
-        host: process.env.GRAFANA_HOST,
-        labels: {
-          app: `${process.env.client}-serverless`,
-          function: `${process.env.client}-${process.env.service}`,
-        },
-        json: true,
-        format: format.json(),
-        basicAuth: `${process.env.GRAFANA_USER}:${process.env.GRAFANA_AUTH}`,
-        replaceTimestamp: true,
-        onConnectionError: (err) => console.error(err),
-      }),
-      new transports.Console({
-        format: format.combine(format.simple(), format.colorize()),
-      }),
-    ],
-  });
-};
 
 const hideSensitiveData = (object, propertiesToHide) => {
   const newObject = JSON.parse(JSON.stringify(object));
@@ -78,16 +50,11 @@ const generateLogPayload = (level, payload = {}, propertiesToHide = []) => {
     newPayload,
     client,
     service,
-    ipAddress: sourceIpAddress,
   };
 };
 
 const initLog = (logPayload, level) => {
   const startDate = new Date();
-
-  if (!logger) {
-    initializeLogger();
-  }
 
   const customLog = {
     debug,
@@ -104,60 +71,21 @@ const initLog = (logPayload, level) => {
   });
 };
 
+const logging = (logPayload) => {
+  return lambdaAccess.invokeLambda("grafana", "logger", {
+    body:
+      typeof logPayload == "string" ? logPayload : JSON.stringify(logPayload),
+  });
+};
+
 const logPayloadAccordingLevel = (level, payload) => {
   const logPayload = JSON.stringify(payload, null, 2);
 
-  switch (level) {
-    case LEVEL_DEBUG:
-      if (envsToNotShowLogs.includes(process.env.stage)) {
-        return console.debug(logPayload);
-      }
-
-      logger.debug(logPayload);
-      break;
-    case LEVEL_PENDING:
-      if (envsToNotShowLogs.includes(process.env.stage)) {
-        return console.info(logPayload);
-      }
-
-      logger.info(logPayload);
-      break;
-    case LEVEL_INFO:
-      if (envsToNotShowLogs.includes(process.env.stage)) {
-        return console.info(logPayload);
-      }
-
-      logger.info(logPayload);
-      break;
-    case LEVEL_WARN:
-      if (envsToNotShowLogs.includes(process.env.stage)) {
-        return console.warn(logPayload);
-      }
-
-      logger.warning(logPayload);
-      break;
-    case LEVEL_ERROR:
-      if (envsToNotShowLogs.includes(process.env.stage)) {
-        return console.error(logPayload);
-      }
-
-      logger.error(logPayload);
-      break;
-    case LEVEL_FAIL:
-      if (envsToNotShowLogs.includes(process.env.stage)) {
-        return console.error(logPayload);
-      }
-
-      logger.error(logPayload);
-      break;
-    default:
-      if (envsToNotShowLogs.includes(process.env.stage)) {
-        return console.info(logPayload);
-      }
-
-      logger.info(logPayload);
-      break;
+  if (envsToNotShowLogs.includes(process.env.stage)) {
+    return console.log(logPayload);
   }
+
+  logging(logPayload, level);
 };
 
 const log = (level, payload, propertiesToHide = []) => {
@@ -239,5 +167,4 @@ module.exports = {
   error,
   fail,
   initLog,
-  logger,
 };

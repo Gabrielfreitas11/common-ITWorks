@@ -1,6 +1,6 @@
 {
   "name": "@impostograma/common",
-  "version": "1.0.12",
+  "version": "1.0.37",
   "main": "index.js",
   "engines": {
     "node": ">=14"
@@ -25,8 +25,7 @@
   "homepage": "https://github.com/Gabrielfreitas11/common-ITWorks#readme",
   "description": "Common para os projetos da itwotks",
   "dependencies": {
-    "axios": "^1.4.0",
-    "winston": "^3.8.2",
-    "winston-loki": "^6.0.6"
+    "aws-sdk": "^2.1368.0",
+    "axios": "^1.4.0"
   }
 }

@@ -5,6 +5,8 @@ const Http = require("./src/http");
 const Logger = require("./src/logger");
 const Validator = require("./src/validator");
 const Formatter = require("./src/formatter");
+const Lambda = require("./src/aws/lambda");
+const S3 = require("./src/aws/s3");
 
 module.exports = {
   Cryptography,
@@ -13,5 +15,7 @@ module.exports = {
   Http,
   Logger,
   Validator,
-  Formatter
+  Formatter,
+  Lambda,
+  S3,
 };

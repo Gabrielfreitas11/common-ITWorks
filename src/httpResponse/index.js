@@ -1,35 +1,35 @@
 module.exports = class HttpResponse {
-  static ok(body) {
+  static ok(body, status = 'statusCode') {
     return {
-      statusCode: 200,
+      [status]: 200,
       body,
     };
   }
 
-  static created(body) {
+  static created(body, status = 'statusCode') {
     return {
-      statusCode: 201,
+      [status]: 201,
       body,
     };
   }
 
-  static notFound(body) {
+  static notFound(body, status = 'statusCode') {
     return {
-      statusCode: 404,
+      [status]: 404,
       body,
     };
   }
 
-  static badRequest(body) {
+  static badRequest(body, status = 'statusCode') {
     return {
-      statusCode: 400,
+      [status]: 400,
       body,
     };
   }
 
-  static serverError(body) {
+  static serverError(body, status = 'statusCode') {
     return {
-      statusCode: 500,
+      [status]: 500,
       body,
     };
   }
