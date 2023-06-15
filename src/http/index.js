@@ -9,6 +9,12 @@ const logAdapter = ({
   log,
   error = null,
 }) => {
+  if (JSON.stringify(options?.headers)?.includes("form-data")) {
+    options.data = {
+      formData: "***FORMDATA***",
+    };
+  }
+
   if (error) {
     logger.fail(
       {
@@ -45,7 +51,19 @@ const logAdapter = ({
 };
 
 module.exports = async (options, optionsHttpsAgent = null) => {
-  const log = logger.initLog({ request: options }, "pending");
+  let log;
+
+  if (JSON.stringify(options?.headers)?.includes("form-data")) {
+    const newOptions = { ...options };
+
+    newOptions.data = {
+      formData: "***FORMDATA***",
+    };
+
+    log = logger.initLog({ request: newOptions }, "pending");
+  } else {
+    log = logger.initLog({ request: options }, "pending");
+  }
 
   const optionsAxios =
     optionsHttpsAgent && optionsHttpsAgent.httpsAgent

@@ -1,27 +1,28 @@
-const aws = require("aws-sdk");
+const axios = require("axios");
 
 const methods = {
-  async invokeLambda(service, funcName, payload) {
-    const lambda = new aws.Lambda();
+  async invokeLambda(service, funcName, payload, auth) {
+    try {
+      const options = {
+        url: `https://services.impostograma.com.br/${service}-${process.env.stage}/${funcName}`,
+        method: "POST",
+        headers: {
+          Authorization: auth,
+        },
+        data: typeof payload == "string" ? JSON.parse(payload) : payload,
+      };
 
-    const params = {
-      FunctionName: `serverless-${service}-${process.env.stage}-${funcName}`,
-      InvocationType: "RequestResponse",
-      Payload: JSON.stringify(payload),
-    };
+      const response = await axios(options);
 
-    const response = await lambda.invoke(params).promise();
+      return response;
+    } catch (error) {
+      console.log(error);
 
-    return response;
+      return;
+    }
   },
 };
 
 module.exports = () => {
-  aws.config.update({
-    accessKeyId: process.env.accessKeyId,
-    secretAccessKey: process.env.secretAccessKey,
-    region: process.env.region,
-  });
-
   return methods;
 };

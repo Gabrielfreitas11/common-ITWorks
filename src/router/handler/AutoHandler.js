@@ -8,30 +8,45 @@ const BaseHandler = require("./BaseHandler");
  * @param {string} controllersPath path to the folder containing the routes
  * @param  {...Function<Promise>} middlewares any number of middlewares that alter the request response
  */
-const AutoHandler = (controllersPath, allowMethodsDiableCors, ...middlewares) => {
+const AutoHandler = (
+  controllersPath,
+  allowMethodsDiableCors,
+  ...middlewares
+) => {
   class MyHandler extends BaseHandler {}
   const handler = new MyHandler();
 
-  const folders = fs.readdirSync(controllersPath);
+  const paths = Array.isArray(controllersPath)
+    ? controllersPath
+    : [controllersPath];
 
   const functionsToExport = {};
 
-  folders.forEach((service) => {
-    handler[service] = require(`${controllersPath}/${service}`);
-    functionsToExport[service] = (event, context) => {
-      const requestPromise = handler.handle(event, context, service, allowMethodsDiableCors);
+  paths.forEach((controllerPath) => {
+    const folders = fs.readdirSync(controllerPath);
 
-      // add middlewares if needed
-      if (middlewares.length === 0) {
-        return requestPromise;
-      }
+    folders.forEach((service) => {
+      handler[service] = require(`${controllerPath}/${service}`);
+      functionsToExport[service] = (event, context) => {
+        const requestPromise = handler.handle(
+          event,
+          context,
+          service,
+          allowMethodsDiableCors
+        );
 
-      const lastPromise = middlewares.reduce((promise, middleware) => {
-        return middleware(promise, service, event, context, BaseHandler);
-      }, requestPromise);
+        // add middlewares if needed
+        if (middlewares.length === 0) {
+          return requestPromise;
+        }
 
-      return lastPromise;
-    };
+        const lastPromise = middlewares.reduce((promise, middleware) => {
+          return middleware(promise, service, event, context, BaseHandler);
+        }, requestPromise);
+
+        return lastPromise;
+      };
+    });
   });
 
   return functionsToExport;

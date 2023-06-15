@@ -1,11 +1,5 @@
-const lambda = require("../aws/lambda");
-
-const lambdaAccess = lambda();
-
 const { client, service, hideSensitiveProperies, sourceIpAddress } =
   process.env;
-
-const envsToNotShowLogs = ["local", "test"];
 
 const {
   LEVEL_DEBUG,
@@ -66,29 +60,38 @@ const initLog = (logPayload, level) => {
   }[level](logPayload);
 
   return () => ({
-    ...customLog,
+    ...(customLog || logPayload),
     duration: (new Date() - startDate) / 1000,
   });
 };
 
-const logging = (logPayload) => {
-  return lambdaAccess.invokeLambda("grafana", "logger", {
-    body:
-      typeof logPayload == "string" ? logPayload : JSON.stringify(logPayload),
-  });
-};
-
-const logPayloadAccordingLevel = (level, payload) => {
-  const logPayload = JSON.stringify(payload, null, 2);
-
-  if (envsToNotShowLogs.includes(process.env.stage)) {
-    return console.log(logPayload);
+function logPayloadAccordingLevel(level, payload) {
+  switch (level) {
+    case LEVEL_DEBUG:
+      console.debug(JSON.stringify(payload, null, 2));
+      break;
+    case LEVEL_PENDING:
+      console.info(JSON.stringify(payload, null, 2));
+      break;
+    case LEVEL_INFO:
+      console.info(JSON.stringify(payload, null, 2));
+      break;
+    case LEVEL_WARN:
+      console.warn(JSON.stringify(payload, null, 2));
+      break;
+    case LEVEL_ERROR:
+      console.error(JSON.stringify(payload, null, 2));
+      break;
+    case LEVEL_FAIL:
+      console.error(JSON.stringify(payload, null, 2));
+      break;
+    default:
+      console.info(JSON.stringify(payload, null, 2));
+      break;
   }
+}
 
-  logging(logPayload, level);
-};
-
-const log = (level, payload, propertiesToHide = []) => {
+function log(level, payload, propertiesToHide = []) {
   const payloadCopy = JSON.parse(JSON.stringify(payload));
   const logPayload = generateLogPayload(level, payloadCopy, propertiesToHide);
 
@@ -97,7 +100,7 @@ const log = (level, payload, propertiesToHide = []) => {
   }
 
   return payload;
-};
+}
 
 /**
  * Creates DEBUG log information.
