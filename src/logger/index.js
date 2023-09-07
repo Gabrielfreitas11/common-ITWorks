@@ -47,8 +47,35 @@ const generateLogPayload = (level, payload = {}, propertiesToHide = []) => {
   };
 };
 
-const initLog = (logPayload, level) => {
+const initLog = (logPayload, level, logData = true) => {
   const startDate = new Date();
+
+  let payload =
+    typeof logPayload === "string"
+      ? { ...JSON.parse(logPayload) }
+      : { ...logPayload };
+
+  if (
+    Array.isArray(payload?.response?.body) &&
+    payload?.response?.body?.length > 2
+  ) {
+    payload.response.body = {
+      message: "***ARRAY GRANDE***",
+      preview: [payload?.response?.body[0], payload?.response?.body[1]],
+    };
+  }
+
+  if (payload?.response?.body != null && !logData) {
+    payload.response.body = {
+      message: "***LOG DESABILITADO***",
+    };
+  }
+
+  if (payload?.request != null && !logData) {
+    payload.request = {
+      message: "***LOG DESABILITADO***",
+    };
+  }
 
   const customLog = {
     debug,
@@ -92,7 +119,9 @@ function logPayloadAccordingLevel(level, payload) {
 }
 
 function log(level, payload, propertiesToHide = []) {
+
   const payloadCopy = JSON.parse(JSON.stringify(payload));
+
   const logPayload = generateLogPayload(level, payloadCopy, propertiesToHide);
 
   if (process.env.stage) {

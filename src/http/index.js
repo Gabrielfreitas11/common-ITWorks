@@ -50,7 +50,7 @@ const logAdapter = ({
   );
 };
 
-module.exports = async (options, optionsHttpsAgent = null) => {
+module.exports = async (options, logData = true, optionsHttpsAgent = null) => {
   let log;
 
   if (JSON.stringify(options?.headers)?.includes("form-data")) {
@@ -60,9 +60,17 @@ module.exports = async (options, optionsHttpsAgent = null) => {
       formData: "***FORMDATA***",
     };
 
-    log = logger.initLog({ request: newOptions }, "pending");
+    log = logger.initLog({ request: newOptions }, "pending", logData);
   } else {
-    log = logger.initLog({ request: options }, "pending");
+    let newOptions = { ...options };
+
+    if (!logData) {
+      newOptions = {
+        data: "***LOG DESABILITADO***",
+      };
+    }
+
+    log = logger.initLog({ request: newOptions }, "pending", logData);
   }
 
   const optionsAxios =

@@ -65,7 +65,7 @@ module.exports = class BaseHandler {
 
       const logPayload = log();
 
-      logPayload.response = response;
+      logPayload.response = { ...response };
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         logger.initLog(logPayload, "info");
