@@ -119,7 +119,6 @@ function logPayloadAccordingLevel(level, payload) {
 }
 
 function log(level, payload, propertiesToHide = []) {
-
   const payloadCopy = JSON.parse(JSON.stringify(payload));
 
   const logPayload = generateLogPayload(level, payloadCopy, propertiesToHide);

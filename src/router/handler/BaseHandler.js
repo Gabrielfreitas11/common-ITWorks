@@ -14,6 +14,10 @@ module.exports = class BaseHandler {
 
     const origin = event.headers?.origin || event.headers?.Origin;
 
+    if (JSON.stringify(event?.headers)?.toUpperCase().includes("DB_NAME")) {
+      global.DB_NAME = event.headers.DB_NAME ?? event.headers.db_name
+    }
+
     if (JSON.stringify(event?.headers)?.includes("form-data")) {
       event.body = JSON.stringify({
         formData: event.body,
