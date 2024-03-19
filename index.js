@@ -9,7 +9,7 @@ const Lambda = require("./src/aws/lambda");
 const S3 = require("./src/aws/s3");
 const SQS = require("./src/aws/sqs");
 const Functions = require("./src/functions");
-
+const Email = require("./src/email");
 module.exports = {
   Cryptography,
   Router,
@@ -22,4 +22,5 @@ module.exports = {
   Lambda,
   S3,
   SQS,
+  Email,
 };
