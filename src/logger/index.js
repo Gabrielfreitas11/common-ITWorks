@@ -8,6 +8,7 @@ const {
   LEVEL_INFO,
   LEVEL_PENDING,
   LEVEL_WARN,
+  dateOptions,
 } = require("./constants");
 
 const hideSensitiveData = (object, propertiesToHide) => {
@@ -190,6 +191,35 @@ const fail = (payload, propertiesToHide = []) => {
   return log(LEVEL_FAIL, payload, propertiesToHide);
 };
 
+/**
+ * @description A class that makes it easy to show logs
+ */
+class StructureLogger {
+  /**
+   * @param {string} functionName - the name of the lambda function
+   * @param {string} level - the level of logging. Can be 'INFO', 'WARN' or 'ERROR'
+   * @param {any} data - anything important to log. Can be Object or string
+   */
+  log(functionName, level = "INFO", data) {
+    const log = {
+      functionName,
+      time: new Date().toLocaleDateString("pt-br", dateOptions),
+      data,
+    };
+    switch (level) {
+      case "ERROR":
+        return error(log);
+
+      case "WARN":
+        return warn(log);
+        break;
+
+      default:
+        return info(log);
+    }
+  }
+}
+
 module.exports = {
   debug,
   pending,
@@ -198,4 +228,5 @@ module.exports = {
   error,
   fail,
   initLog,
+  StructureLogger,
 };
