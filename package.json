@@ -1,6 +1,6 @@
 {
   "name": "@impostograma/common",
-  "version": "1.0.93",
+  "version": "2.0.1",
   "main": "index.js",
   "engines": {
     "node": ">=14"
