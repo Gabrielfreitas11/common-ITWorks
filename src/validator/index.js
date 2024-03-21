@@ -11,6 +11,7 @@ module.exports = (params, schema) => {
     return {
       error: true,
       message: `O seguinte parâmetro está faltando ou incorreto: ${result.error.details[0].path[0]}`,
+      errorMessage: result.error.details[0].message
     };
   }
 
