@@ -35,6 +35,6 @@ exports.sendEmailOffice365NoReply = async (emails, subject, html) => {
     return info;
   } catch (error) {
     console.log(error);
-    return null;
+    throw error;
   }
 };
