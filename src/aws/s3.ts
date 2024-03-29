@@ -1,8 +1,8 @@
-import * as aws from "aws-sdk";
-import { PutObjectRequest } from "aws-sdk/clients/s3";
+import * as aws from 'aws-sdk';
+import { PutObjectRequest } from 'aws-sdk/clients/s3';
 
 const methods = {
-  async getContentFile(bucketName, keyName) {
+  async getContentFile(bucketName: string, keyName: string) {
     const params = {
       Bucket: bucketName,
       Key: keyName,
@@ -13,7 +13,7 @@ const methods = {
     return s3sdk.getObject(params).promise();
   },
 
-  async sendFile(fileDetails, expires, acl = "public-read") {
+  async sendFile(fileDetails, expires, acl = 'public-read') {
     const params: PutObjectRequest = {
       Bucket: fileDetails.bucket,
       Key: fileDetails.caption,

@@ -1,8 +1,7 @@
-import AutoHandler from "./handler/AutoHandler";
+import AutoHandler from './handler/AutoHandler';
 
-import setAWSLogLink from "./middleware/setAWSLogLink";
+import setAWSLogLink from './middleware/setAWSLogLink';
 
-const handler = (dir, allowMethodsDiableCors = []) =>
-  AutoHandler(dir, allowMethodsDiableCors, setAWSLogLink);
+const handler = (dir: string) => AutoHandler(dir, setAWSLogLink);
 
 export { handler };

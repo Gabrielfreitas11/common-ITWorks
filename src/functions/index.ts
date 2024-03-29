@@ -1,20 +1,20 @@
-import validbarcode from "barcode-validator";
+import validbarcode from 'barcode-validator';
 
-export const calculaDigitoEAN = (EAN) => {
+export const calculaDigitoEAN = (EAN: string) => {
   try {
     // Se foram passados apenas zeros ou o tamanho é menor que 8 ou maior que 14, retorna inválido
     if (
       parseInt(EAN) === 0 ||
       String(parseInt(EAN)).length < 8 ||
       String(parseInt(EAN)).length > 14 ||
-      Number.isNaN(EAN.replace(".", "").replace(",", ""))
+      Number.isNaN(EAN.replace('.', '').replace(',', ''))
     ) {
       // Retorna com um dígito "X" indicando que o EAN passado é inválido quanto ao tamanho padrão
       return false;
     }
 
     // Verifica se é uma balança
-    if (EAN.startsWith("2") || EAN.startsWith("02")) {
+    if (EAN.startsWith('2') || EAN.startsWith('02')) {
       // Retorna com um dígito "X" indicando que o EAN passado é inválido para balanças
       return false;
     }

@@ -1,11 +1,11 @@
-import { codes, reverseCodes } from "./data";
+import { codes, reverseCodes } from './data';
 
-const criptoRule = (strCripto, cypher = true) => {
-  let valorFinal = "";
+const criptoRule = (strCripto: string, cypher: boolean = true) => {
+  let valorFinal = '';
 
   const aChaves = [77, 84, 79, 65, 73, 78, 67, 70, 82];
 
-  const arrayCaracteres = strCripto.split("");
+  const arrayCaracteres = strCripto.split('');
 
   arrayCaracteres.forEach((el, i) => {
     let n = reverseCodes[el];

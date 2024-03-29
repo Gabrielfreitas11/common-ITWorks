@@ -1,18 +1,7 @@
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
+import * as fs from 'fs';
+import BaseHandler from './BaseHandler';
 
-import * as fs from "fs";
-import BaseHandler from "./BaseHandler";
-
-/**
- * @param {string} controllersPath path to the folder containing the routes
- * @param  {...Function<Promise>} middlewares any number of middlewares that alter the request response
- */
-const AutoHandler = (
-  controllersPath,
-  allowMethodsDiableCors,
-  ...middlewares
-) => {
+const AutoHandler = (controllersPath: string[] | string, ...middlewares) => {
   class MyHandler extends BaseHandler {}
   const handler = new MyHandler();
 

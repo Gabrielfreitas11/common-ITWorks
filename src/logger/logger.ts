@@ -9,14 +9,14 @@ import {
   LEVEL_PENDING,
   LEVEL_WARN,
   dateOptions,
-} from "./index";
+} from './index';
 
 const hideSensitiveData = (object, propertiesToHide) => {
   const newObject = JSON.parse(JSON.stringify(object));
 
   propertiesToHide.forEach((property) => {
     if (object[property]) {
-      newObject[property] = "** sensitive data **";
+      newObject[property] = '** sensitive data **';
     }
   });
 
@@ -56,7 +56,7 @@ const initLog = (logPayload, level, logData = true) => {
   const startDate = new Date();
 
   let payload =
-    typeof logPayload === "string"
+    typeof logPayload === 'string'
       ? { ...JSON.parse(logPayload) }
       : { ...logPayload };
 
@@ -65,20 +65,20 @@ const initLog = (logPayload, level, logData = true) => {
     payload?.response?.body?.length > 2
   ) {
     payload.response.body = {
-      message: "***ARRAY GRANDE***",
+      message: '***ARRAY GRANDE***',
       preview: [payload?.response?.body[0], payload?.response?.body[1]],
     };
   }
 
   if (payload?.response?.body != null && !logData) {
     payload.response.body = {
-      message: "***LOG DESABILITADO***",
+      message: '***LOG DESABILITADO***',
     };
   }
 
   if (payload?.request != null && !logData) {
     payload.request = {
-      message: "***LOG DESABILITADO***",
+      message: '***LOG DESABILITADO***',
     };
   }
 
@@ -199,24 +199,26 @@ const fail = (payload, propertiesToHide = []) => {
  * @description A class that makes it easy to show logs
  */
 class StructureLogger {
-  /**
-   * @param {string} functionName - the name of the lambda function
-   * @param {string} level - the level of logging. Can be 'INFO', 'WARN' or 'ERROR'
-   * @param {any} data - anything important to log. Can be Object or string
-   */
-  log(functionName, level = "INFO", data) {
+  log(
+    functionName: string,
+    level: 'ERROR' | 'WARN' | 'INFO',
+    data: {
+      error?: any;
+      message: string;
+      [key: string]: any;
+    }
+  ) {
     const log = {
       functionName,
-      time: new Date().toLocaleDateString("pt-br", dateOptions),
+      time: new Date().toLocaleDateString('pt-br', dateOptions),
       data,
     };
     switch (level) {
-      case "ERROR":
+      case 'ERROR':
         return error(log);
 
-      case "WARN":
+      case 'WARN':
         return warn(log);
-        break;
 
       default:
         return info(log);

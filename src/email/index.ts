@@ -1,12 +1,5 @@
-import * as nodemailer from "nodemailer";
-/**
- * @description A function that sends a email to the specified addresses (can not be replied)
- * must has the following envs in your application: HOST_OFFICE, USERNAME_NO_REPLY and PASSWORD_NO_REPLY
- * @param {Array} emails - Array of email addresses
- * @param {string} subject - Subject of the email
- * @param {string} html  - Text of the email
- * @returns  returns a message from transporter nodemailer or null if has error
- */
+import * as nodemailer from 'nodemailer';
+
 export const sendEmailOffice365NoReply = async (
   emails: string[],
   subject: string,
@@ -25,11 +18,11 @@ export const sendEmailOffice365NoReply = async (
 
     const from = process.env.USERNAME_NO_REPLY;
     const fromName =
-      process.env.domain === "IC" ? "Impostocerto" : "Impostograma";
+      process.env.domain === 'IC' ? 'Impostocerto' : 'Impostograma';
 
     const mailOptions = {
       from: `${fromName} <${from}>`,
-      to: emails.join(", "),
+      to: emails.join(', '),
       subject,
       html,
     };
@@ -38,7 +31,6 @@ export const sendEmailOffice365NoReply = async (
 
     return info;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
