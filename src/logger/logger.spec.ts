@@ -5,7 +5,7 @@ describe('StructureLogger', () => {
     process.env.stage = 'development';
   });
 
-  it.skip('should log with level error', () => {
+  it('should log with level error', () => {
     //Arrange
     const structureLogger = new StructureLogger();
 
@@ -28,7 +28,7 @@ describe('StructureLogger', () => {
     expect(consoleSpy).toHaveBeenCalled();
   });
 
-  it.skip('should log with level info', () => {
+  it('should log with level info', () => {
     //Arrange
     const structureLogger = new StructureLogger();
 
