@@ -1,4 +1,4 @@
-import * as Joi from "Joi";
+import * as Joi from "joi";
 import { messages } from "joi-translation-pt-br";
 
 export const Validator = (params: any, schema: Joi.ObjectSchema) => {
