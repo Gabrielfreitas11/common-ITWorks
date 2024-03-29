@@ -1,4 +1,5 @@
 import * as Joi from "Joi";
+import { messages } from "joi-translation-pt-br";
 
 export const Validator = (params: any, schema: Joi.ObjectSchema) => {
   if (!params) {
@@ -8,12 +9,11 @@ export const Validator = (params: any, schema: Joi.ObjectSchema) => {
     };
   }
 
-  const result = schema.validate(params);
+  const result = schema.validate(params, { messages });
   if (result.error) {
     return {
       error: true,
-      message: `O seguinte parâmetro está faltando ou incorreto: ${result.error.details[0].path[0]}`,
-      errorMessage: result.error.details[0].message,
+      message: result.error.message,
     };
   }
 
