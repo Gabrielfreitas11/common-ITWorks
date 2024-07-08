@@ -3,6 +3,11 @@ export declare class HttpResponse {
         [x: string]: any;
         body: any;
     };
+    static custom(body: any, status?: string): {
+        [x: string]: any;
+        body: any;
+        custom: boolean;
+    };
     static created(body: any, status?: string): {
         [x: string]: any;
         body: any;

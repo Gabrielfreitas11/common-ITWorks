@@ -6,6 +6,14 @@ export class HttpResponse {
     };
   }
 
+  static custom(body, status = "statusCode") {
+    return {
+      [status]: 200,
+      body,
+      custom: true,
+    };
+  }
+
   static created(body, status = "statusCode") {
     return {
       [status]: 201,

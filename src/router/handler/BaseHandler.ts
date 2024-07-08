@@ -82,10 +82,16 @@ export default class BaseHandler {
         logger.initLog(logPayload, "error");
       }
 
+      let body =
+        typeof response === "string" ? response : JSON.stringify(response);
+
+      if (JSON.parse(body)?.custom) {
+        body = JSON.stringify(JSON.parse(body)?.body);
+      }
+
       const returnFunction = BaseHandler.httpResponse({
         statusCode: response.statusCode,
-        body:
-          typeof response === "string" ? response : JSON.stringify(response),
+        body,
         headers: response.headers,
       });
 
