@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { HttpResponseModel } from "../../@types/http";
 export default class BaseHandler {
     event: any;

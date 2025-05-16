@@ -19,6 +19,18 @@ export default class BaseHandler {
       global.DB_NAME = event.headers.DB_NAME ?? event.headers.db_name;
     }
 
+    if (JSON.stringify(event?.headers)?.toLowerCase().includes("usuario_compartilhado")) {
+      global.USUARIO_COMPARTILHADO = event.headers.USUARIO_COMPARTILHADO ?? event.headers.usuario_compartilhado;
+    }
+
+    if (JSON.stringify(event?.headers)?.toLowerCase().includes("email_login")) {
+      global.EMAIL_LOGIN = event.headers.EMAIL_LOGIN ?? event.headers.email_login;
+    }
+
+    if (JSON.stringify(event?.headers)?.toLowerCase().includes("cnpj_gestor")) {
+      global.CNPJ_GESTOR = event.headers.CNPJ_GESTOR ?? event.headers.cnpj_gestor;
+    }
+
     if (JSON.stringify(event?.headers)?.includes("form-data")) {
       event.body = JSON.stringify({
         formData: event.body,

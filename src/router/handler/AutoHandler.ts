@@ -25,7 +25,7 @@ const AutoHandler = (
   paths.forEach((controllerPath) => {
     const folders = fs.readdirSync(controllerPath);
 
-    folders.forEach((service) => {
+    folders.filter(el => !el.startsWith(".")).forEach((service) => {
       handler[service] = require(`${controllerPath}/${service}`);
       functionsToExport[service] = (event, context) => {
         const requestPromise = handler.handle(event, context, service);
