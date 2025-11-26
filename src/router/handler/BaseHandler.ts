@@ -19,16 +19,46 @@ export default class BaseHandler {
       global.DB_NAME = event.headers.DB_NAME ?? event.headers.db_name;
     }
 
-    if (JSON.stringify(event?.headers)?.toLowerCase().includes("usuario_compartilhado")) {
-      global.USUARIO_COMPARTILHADO = event.headers.USUARIO_COMPARTILHADO ?? event.headers.usuario_compartilhado;
+    if (
+      JSON.stringify(event?.headers)
+        ?.toLowerCase()
+        .includes("usuario_compartilhado")
+    ) {
+      global.USUARIO_COMPARTILHADO =
+        event.headers.USUARIO_COMPARTILHADO ??
+        event.headers.usuario_compartilhado;
     }
 
     if (JSON.stringify(event?.headers)?.toLowerCase().includes("email_login")) {
-      global.EMAIL_LOGIN = event.headers.EMAIL_LOGIN ?? event.headers.email_login;
+      global.EMAIL_LOGIN =
+        event.headers.EMAIL_LOGIN ?? event.headers.email_login;
     }
 
     if (JSON.stringify(event?.headers)?.toLowerCase().includes("cnpj_gestor")) {
-      global.CNPJ_GESTOR = event.headers.CNPJ_GESTOR ?? event.headers.cnpj_gestor;
+      global.CNPJ_GESTOR =
+        event.headers.CNPJ_GESTOR ?? event.headers.cnpj_gestor;
+    }
+
+    if (JSON.stringify(event?.headers)?.toLowerCase().includes("app") || JSON.stringify(event?.pathParameters)?.toLowerCase().includes("app")) {
+      global.APP = event.headers.APP ?? event.headers.app ?? event?.pathParameters?.app;
+
+      switch (global.APP?.toLowerCase()) {
+        case "simulador":
+          global.DB_NAME_MAIN = "SMF";
+          break;
+
+        case "impostograma":
+        case "emalote":
+          global.DB_NAME_MAIN = "REVERSA";
+          break;
+
+        case "impostocerto":
+          global.DB_NAME_MAIN = "CAT";
+          break;
+
+        default:
+          break;
+      }
     }
 
     if (JSON.stringify(event?.headers)?.includes("form-data")) {

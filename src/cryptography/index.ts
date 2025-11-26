@@ -1,38 +1,36 @@
-import { codes, reverseCodes } from "./data";
 
-const criptoRule = (strCripto, cypher = true) => {
-  let valorFinal = "";
+const aChaves = [77, 84, 79, 65, 73, 78, 67, 70, 82];
 
-  const aChaves = [77, 84, 79, 65, 73, 78, 67, 70, 82];
+const transformarCaracteres = (input: string, multiplicador: number) => {
+  let resultado = "";
 
-  const arrayCaracteres = strCripto.split("");
-
-  arrayCaracteres.forEach((el, i) => {
-    let n = reverseCodes[el];
+  for (let i = 0; i < input.length; i++) {
+    let n = input.charCodeAt(i);
 
     if (n > 31) {
       n = n - 32;
-
-      const valor = cypher ? 1 : -1;
-
-      n = n + aChaves[i % 9] * valor;
-
+      n = n + (aChaves[i % aChaves.length] * multiplicador);
       n = n % 224;
-
-      if (n < 0) {
-        n = 224 + n;
-      }
-
+      if (n < 0) n = 224 + n;
       n = n + 32;
     }
 
-    valorFinal = valorFinal + codes[n];
-  });
+    resultado += String.fromCharCode(n);
+  }
 
-  return valorFinal;
-};
+  return resultado;
+}
 
-const encrypt = (strCripto: string) => criptoRule(strCripto);
-const decrypt = (strCripto: string) => criptoRule(strCripto, false);
+const encrypt = (strOriginal: string) => {
+  const transformado = transformarCaracteres(strOriginal, 1);
+  const buffer = Buffer.from(transformado, 'utf-8');
+  return buffer.toString('hex');
+}
+
+const decrypt = (hexString: string) => {
+  const buffer = Buffer.from(hexString, 'hex');
+  const input = buffer.toString('utf-8');
+  return transformarCaracteres(input, -1);
+}
 
 export { encrypt, decrypt };
