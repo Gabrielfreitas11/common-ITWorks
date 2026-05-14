@@ -1,6 +1,9 @@
 /**
- * @param {string} controllersPath path to the folder containing the routes
- * @param  {...Function<Promise>} middlewares any number of middlewares that alter the request response
+ * @param controllersPath - Caminho(s) para a(s) pasta(s) contendo os controllers das rotas.
+ * @param allowMethodsDiableCors - Métodos com CORS desabilitado.
+ * @param publicMethods - Métodos que não exigem autenticação.
+ *                        O nome deve corresponder ao nome do arquivo/pasta do controller.
+ * @param middlewares - Middlewares adicionais que processam a requisição/resposta.
  */
-declare const AutoHandler: (controllersPath: any, allowMethodsDiableCors: any, ...middlewares: any[]) => {};
+declare const AutoHandler: (controllersPath: any, allowMethodsDiableCors: any, publicMethods?: string[], ...middlewares: any[]) => {};
 export default AutoHandler;
