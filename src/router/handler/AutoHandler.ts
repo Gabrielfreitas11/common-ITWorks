@@ -5,16 +5,21 @@ import * as fs from "fs";
 import BaseHandler from "./BaseHandler";
 
 /**
- * @param {string} controllersPath path to the folder containing the routes
- * @param  {...Function<Promise>} middlewares any number of middlewares that alter the request response
+ * @param controllersPath - Caminho(s) para a(s) pasta(s) contendo os controllers das rotas.
+ * @param allowMethodsDiableCors - Métodos com CORS desabilitado.
+ * @param publicMethods - Métodos que não exigem autenticação.
+ *                        O nome deve corresponder ao nome do arquivo/pasta do controller.
+ * @param middlewares - Middlewares adicionais que processam a requisição/resposta.
  */
 const AutoHandler = (
   controllersPath,
   allowMethodsDiableCors,
+  publicMethods: string[] = [],
   ...middlewares
 ) => {
   class MyHandler extends BaseHandler {}
   const handler = new MyHandler();
+  handler.publicMethods = publicMethods;
 
   const paths = Array.isArray(controllersPath)
     ? controllersPath

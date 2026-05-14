@@ -8,6 +8,9 @@ export default class BaseHandler {
 
   env = process.env;
 
+  /** Métodos (rotas) que não exigem autenticação */
+  publicMethods: string[] = [];
+
   async handle(event, context, method) {
     let log;
 
@@ -56,6 +59,10 @@ export default class BaseHandler {
           global.DB_NAME_MAIN = "CAT";
           break;
 
+        case "erp":
+          global.DB_NAME_MAIN = "ERP";
+          break;
+
         default:
           break;
       }
@@ -85,7 +92,7 @@ export default class BaseHandler {
       log = logger.initLog({ event, context }, "pending");
     }
     try {
-      if (!this.isAuthorized()) {
+      if (!this.publicMethods.includes(method) && !this.isAuthorized()) {
         const logPayload = log();
         logPayload.response = {
           statusCode: 401,
