@@ -41,4 +41,19 @@ export class HttpResponse {
       body,
     };
   }
+
+  /**
+   * Marca uma resposta para NÃO receber o campo `awsFilter` (link do CloudWatch).
+   * Composável com qualquer um dos demais métodos.
+   *
+   * @example
+   * return HttpResponse.noAwsFilter(HttpResponse.ok(body));
+   * return HttpResponse.noAwsFilter(HttpResponse.custom(body));
+   */
+  static noAwsFilter<T extends object>(response: T) {
+    return {
+      ...response,
+      disableAwsFilter: true,
+    };
+  }
 }
