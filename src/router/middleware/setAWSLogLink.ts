@@ -16,7 +16,14 @@ const handler = async (
   const response = await requestPromise;
   const link = `https://sa-east-1.console.aws.amazon.com/cloudwatch/home?region=sa-east-1#logsV2:log-groups/log-group/$252Faws$252Flambda$252F${context.functionName}/log-events$3FfilterPattern$3D$2522${context.awsRequestId}$2522+`;
 
-  if (process.env.stage === "local") {
+  // Controller sinalizou que esta resposta não deve receber o awsFilter.
+  // Removemos o header interno para não vazar ao cliente.
+  const skipAwsFilter = response?.headers?.["x-disable-aws-filter"] === "true";
+  if (skipAwsFilter) {
+    delete response.headers["x-disable-aws-filter"];
+  }
+
+  if (process.env.stage === "local" || skipAwsFilter) {
     return response;
   }
 

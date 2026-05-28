@@ -121,6 +121,16 @@ export default class BaseHandler {
         response.statusCode = response?.status;
       }
 
+      // Permite que um controller opte por NÃO receber o awsFilter na resposta.
+      // O controller retorna `disableAwsFilter: true`; aqui removemos a flag para
+      // não vazar no body e sinalizamos via header interno lido pelo middleware.
+      const disableAwsFilter =
+        typeof response === "object" && response?.disableAwsFilter === true;
+
+      if (disableAwsFilter) {
+        delete response.disableAwsFilter;
+      }
+
       const logPayload = log();
 
       logPayload.response = { ...response };
@@ -141,7 +151,10 @@ export default class BaseHandler {
       const returnFunction = BaseHandler.httpResponse({
         statusCode: response.statusCode,
         body,
-        headers: response.headers,
+        headers: {
+          ...(response.headers ?? {}),
+          ...(disableAwsFilter ? { "x-disable-aws-filter": "true" } : {}),
+        },
       });
 
       return returnFunction;
