@@ -1,6 +1,6 @@
 {
   "name": "@impostograma/common",
-  "version": "2.2.33",
+  "version": "2.2.36",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "engines": {
@@ -25,7 +25,7 @@
     "url": "https://github.com/Gabrielfreitas11/common-ITWorks/issues"
   },
   "homepage": "https://github.com/Gabrielfreitas11/common-ITWorks#readme",
-  "description": "Common para os projetos da itwotks",
+  "description": "Common para os projetos da itworks",
   "files": [
     "lib/**/*"
   ],
@@ -45,7 +45,6 @@
     "@jest/globals": "^29.7.0",
     "@jest/types": "^29.6.3",
     "@nx/node": "^18.1.3",
-    "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^29.5.12",
     "@types/joi": "^17.2.3",
     "@types/nodemailer": "^6.4.14",
