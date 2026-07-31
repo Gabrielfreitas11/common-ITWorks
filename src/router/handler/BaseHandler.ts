@@ -11,10 +11,17 @@ export default class BaseHandler {
   /** Métodos (rotas) que não exigem autenticação */
   publicMethods: string[] = [];
 
+  /** Métodos (rotas) que não devem logar entrada nem saída */
+  noLogMethods: string[] = [];
+
   async handle(event, context, method) {
     let log;
 
     this.setFunctionContext(event, context);
+
+    // Quando o método está em `noLogMethods`, nenhum log de entrada/saída é
+    // emitido (nem info, nem warn, nem error).
+    const shouldLog = !this.noLogMethods.includes(method);
 
     const origin = event.headers?.origin || event.headers?.Origin;
 
@@ -79,7 +86,7 @@ export default class BaseHandler {
         formData: "***FORMDATA***",
       });
 
-      log = logger.initLog({ event: newEvent, context }, "pending");
+      log = logger.initLog({ event: newEvent, context }, "pending", true, shouldLog);
     } else if (JSON.stringify(event?.body)?.includes("base64")) {
       let newEvent = JSON.parse(event.body);
 
@@ -87,9 +94,9 @@ export default class BaseHandler {
 
       newEvent = JSON.stringify(newEvent);
 
-      log = logger.initLog({ event: newEvent, context }, "pending");
+      log = logger.initLog({ event: newEvent, context }, "pending", true, shouldLog);
     } else {
-      log = logger.initLog({ event, context }, "pending");
+      log = logger.initLog({ event, context }, "pending", true, shouldLog);
     }
     try {
       if (!this.publicMethods.includes(method) && !this.isAuthorized()) {
@@ -99,7 +106,9 @@ export default class BaseHandler {
           message: "Unauthorized!",
         };
 
-        logger.initLog(logPayload, "warn");
+        if (shouldLog) {
+          logger.initLog(logPayload, "warn");
+        }
 
         return BaseHandler.httpResponse({
           statusCode: 401,
@@ -135,10 +144,12 @@ export default class BaseHandler {
 
       logPayload.response = { ...response };
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
-        logger.initLog(logPayload, "info");
-      } else {
-        logger.initLog(logPayload, "error");
+      if (shouldLog) {
+        if (response.statusCode >= 200 && response.statusCode <= 299) {
+          logger.initLog(logPayload, "info");
+        } else {
+          logger.initLog(logPayload, "error");
+        }
       }
 
       let body =
@@ -166,7 +177,9 @@ export default class BaseHandler {
           ? err.response.data
           : err?.message || err;
 
-      logger.initLog(logPayload, "error");
+      if (shouldLog) {
+        logger.initLog(logPayload, "error");
+      }
 
       return BaseHandler.httpResponse({
         statusCode: 500,

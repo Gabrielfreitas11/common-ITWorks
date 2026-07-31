@@ -52,7 +52,7 @@ const generateLogPayload = (
   };
 };
 
-const initLog = (logPayload, level, logData = true) => {
+const initLog = (logPayload, level, logData = true, emit = true) => {
   const startDate = new Date();
 
   let payload =
@@ -82,14 +82,18 @@ const initLog = (logPayload, level, logData = true) => {
     };
   }
 
-  const customLog = {
-    debug,
-    pending,
-    info,
-    warn,
-    error,
-    fail,
-  }[level](logPayload);
+  // `emit = false` mantém a closure (necessária para duration/payload), mas não
+  // imprime nada no console — usado por rotas que optam por não logar.
+  const customLog = emit
+    ? {
+        debug,
+        pending,
+        info,
+        warn,
+        error,
+        fail,
+      }[level](logPayload)
+    : null;
 
   return () => ({
     ...(customLog || logPayload),
