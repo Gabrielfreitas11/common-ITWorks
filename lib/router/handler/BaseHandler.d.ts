@@ -5,6 +5,8 @@ export default class BaseHandler {
     env: NodeJS.ProcessEnv;
     /** Métodos (rotas) que não exigem autenticação */
     publicMethods: string[];
+    /** Métodos (rotas) que não devem logar entrada nem saída */
+    noLogMethods: string[];
     handle(event: any, context: any, method: any): Promise<{
         statusCode: number;
         body: any;

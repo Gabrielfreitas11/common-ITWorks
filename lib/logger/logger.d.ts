@@ -1,4 +1,4 @@
-declare const initLog: (logPayload: any, level: any, logData?: boolean) => () => any;
+declare const initLog: (logPayload: any, level: any, logData?: boolean, emit?: boolean) => () => any;
 /**
  * Creates DEBUG log information.
  *

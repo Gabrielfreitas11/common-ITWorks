@@ -13,6 +13,10 @@ export const calculaDigitoEAN = (EAN) => {
       return false;
     }
 
+    if (String(parseInt(EAN)).includes("00000")) {
+      return false;
+    }
+
     // Verifica se é uma balança
     if (EAN.startsWith("2") || EAN.startsWith("02")) {
       // Retorna com um dígito "X" indicando que o EAN passado é inválido para balanças

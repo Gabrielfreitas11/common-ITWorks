@@ -1,6 +1,6 @@
 {
   "name": "@impostograma/common",
-  "version": "2.2.36",
+  "version": "2.2.37",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "engines": {
